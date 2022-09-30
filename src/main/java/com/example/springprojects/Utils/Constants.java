@@ -4,6 +4,7 @@ public class Constants {
 
     // End_Points
     public static final String EMAIL = "/email";
+    public static final String UNSUBSCRIBE = "/unsubscribe";
     public static final String EMAIL_RECIEVE = "/email/{userCode}";
 
     // Google_Creds
@@ -22,6 +23,10 @@ public class Constants {
 
     public static final String EMAIL_BODY = "Hi sir, Hope you are good to go.\n" +
             "You receive this email from backend.\n";
+
+    public static final String ALERT = "<script>\n" +
+            "  alert(\"You successfully unsubscribe email!\");\n" +
+            "</script>";
 
     public static final String ALPHANUMERIC_STRING = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvxyz";
 

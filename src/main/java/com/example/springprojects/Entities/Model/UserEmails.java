@@ -25,7 +25,7 @@ public class UserEmails {
     @Column(name = "secret_code")
     private String secret_code;
 
-    @Column(name = "subscriptions")
+    @Column(name = "subscription")
     private boolean subscription;
 
     @Override

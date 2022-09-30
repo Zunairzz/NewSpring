@@ -1,13 +1,11 @@
 package com.example.springprojects.Service;
 
-import com.example.springprojects.Entities.Model.Email;
-import com.example.springprojects.Entities.Model.Subscription;
 import com.example.springprojects.Entities.Model.UserEmails;
-import com.example.springprojects.Repository.EmailRepository;
 import com.example.springprojects.Repository.UserEmailRepository;
 import com.example.springprojects.Utils.Constants;
 import com.example.springprojects.Utils.Response;
 import com.example.springprojects.Utils.ResponseCode;
+import org.apache.tomcat.util.codec.binary.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,12 +24,9 @@ public class EmailService {
 
     private Logger logger = LoggerFactory.getLogger(EmailService.class);
     @Autowired
-    EmailRepository emailRepository;
-
-    @Autowired
     UserEmailRepository userEmailRepository;
 
-    public Response<Email> sendEmail() {
+    public Response<UserEmails> sendEmail() {
 
         logger.info("Get system properties");
         Properties properties = System.getProperties();
@@ -54,13 +49,14 @@ public class EmailService {
 
         // Emails
         logger.info("Emails recevied");
-        List<UserEmails> userEmailsList = userEmailRepository.findAll();
+        List<UserEmails> userEmailsList = userEmailRepository.findAllBy();
         for (int i = 0; i < userEmailsList.size(); i++) {
+
+            byte[] bytesEncoded = Base64.encodeBase64(userEmailsList.get(i).getSecret_code().getBytes());
 
             //Step 2 : compose the message [text,multi media]
             MimeMessage message = new MimeMessage(session);
-//            String randomStr = UserEmailDto.genRanStr();
-            String createLink = "http://localhost:7075/email/" + userEmailsList.get(i).getSecret_code();
+            String createLink = "http://localhost:7075/email/" + new String(bytesEncoded);;
             String resLink = link(createLink);
             try {
                 message.setFrom(Constants.EMAIL_FROM);
@@ -109,10 +105,12 @@ public class EmailService {
     }
 
     public Response<UserEmails> unsubscribe(String userCode) {
-        UserEmails existing = emailRepository.findAllByUserCode(userCode);
+        // Decode data on other side, by processing encoded data
+        byte[] userCodeDecoded = Base64.decodeBase64(userCode);
+        UserEmails existing = userEmailRepository.findAllByUserCode(new String(userCodeDecoded));
         if (existing != null) {
             existing.setSubscription(false);
-            emailRepository.save(existing);
+            userEmailRepository.save(existing);
         } else {
             return new Response<>(ResponseCode.RECORD_NOT_FOUND, "No Entry Found!");
         }

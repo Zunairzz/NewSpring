@@ -11,5 +11,11 @@ import java.util.List;
 public interface UserEmailRepository extends CrudRepository<UserEmails, Long> {
 
     @Query(value = "select * from user_emails", nativeQuery = true)
-    List<UserEmails> findAll();
+    List<UserEmails> findAllBy();
+
+    @Query(value = "select * from user_emails where secret_code=:userCode", nativeQuery = true)
+    UserEmails findAllByUserCode(String userCode);
+
+    @Query(value = "select * from user_emails where id=:id", nativeQuery = true)
+    UserEmails findAllById(Long id);
 }
