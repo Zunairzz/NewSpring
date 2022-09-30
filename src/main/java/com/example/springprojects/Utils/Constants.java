@@ -4,7 +4,6 @@ public class Constants {
 
     // End_Points
     public static final String EMAIL = "/email";
-    public static final String UNSUBSCRIBE = "/unsubscribe";
     public static final String EMAIL_RECIEVE = "/email/{userCode}";
 
     // Google_Creds
